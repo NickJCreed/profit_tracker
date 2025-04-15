@@ -384,7 +384,7 @@ if uploaded_file is not None:
             
             # Update text size and position
             fig.update_traces(
-                textfont=dict(size=14),  # Increase text size
+                textfont=dict(size=14),  # Increase text size to 16
                 textposition='outside'    # Place text above bars
             )
             
@@ -398,12 +398,23 @@ if uploaded_file is not None:
                 line=dict(color="black", width=1.5, dash="dot")
             )
             
-            # Format the chart
+            # Calculate the date range for the last 14 days
+            last_14_days = daily_profit['Date'].max() - pd.Timedelta(days=14)
+
+            # Update the layout to set the default x-axis range
             fig.update_layout(
-                xaxis_tickangle=-45,
-                height=500,
-                hoverlabel=dict(bgcolor="white", font_size=14),
-                coloraxis_showscale=False
+                xaxis=dict(
+                    range=[last_14_days, daily_profit['Date'].max()],  # Set default range to last 14 days
+                    rangeselector=dict(
+                        buttons=list([
+                            dict(count=14, label='14d', step='day', stepmode='backward'),
+                            dict(step='all', label='Reset')  # Add a reset button
+                        ])
+                    ),
+                    rangeslider=dict(visible=True),  # Add a range slider for easy navigation
+                    type='date'
+                ),
+                height=600  # Increase height to 600
             )
             
             st.plotly_chart(fig, use_container_width=True)
@@ -556,7 +567,7 @@ if uploaded_file is not None:
                             title=title_text,
                             xaxis_title='Date',
                             yaxis_title=y_axis_label,
-                            height=500,
+                            height=600,
                             legend=dict(
                                 orientation="h",
                                 yanchor="bottom",
